@@ -1,0 +1,96 @@
+# Byte-compiled files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Virtual environment
+venv/
+ENV/
+env/
+.venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Mypy
+.mypy_cache/
+
+# Pytest
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+*.log
+*.tmp
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pylint
+pylint-report.txt
+pylint-common.txt
+
+# Black
+.pyproject.toml
+*.pyproject.toml
+
+# Flask and Django
+instance/
+*.sqlite3
+*.db
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+*.wheel
+
+# Environment variables
+.env
+.env.*
+*.env
+
+# IDEs and editors
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Secrets
+secret_keys.py
+
+# Logs
+logs/
+*.log
+*.tmp
+
+# Temporary files
+*.bak
+*.swp
+*.swo
+*.tmp
+*.orig
+*.un~
+
+# Backup files
+*.bak
+
+# Untracked files
+*.un~
+*.orig
+*.tmp

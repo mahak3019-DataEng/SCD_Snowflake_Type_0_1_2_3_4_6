@@ -1,0 +1,76 @@
+Step 1: Initial Customer tables
++-------------+---------------+-----------------+----------------+------------+------------------+
+| CUSTOMER_ID | CUSTOMER_NAME | CUSTOMER_EMAIL  | CUSTOMER_PHONE | LOAD_DATE  | CUSTOMER_ADDRESS |
+|-------------+---------------+-----------------+----------------+------------+------------------|
+|           1 | Arpit Rathi   | arpit@gmail.com | 2222222222     | 2022-04-14 | 125 New St       |
+|           2 | Pawan Singh   | pawan@gmail.com | 4444444444     | 2024-04-10 | 256 Highway St   |
+|           3 | Karan Agrawal | karan@gmail.com | 6666666666     | 2022-07-12 | 100 Sonaway Mn   |
+|           4 | Aarav Bishnoi | aarav@gmail.com | 8888888888     | 2024-08-24 | 140 Main Street  |
++-------------+---------------+-----------------+----------------+------------+------------------+
+4 Row(s) produced. Time Elapsed: 0.251s
+
+-- Applying Type 1 SCD ---- overwritten
++-------------+---------------+-----------------+----------------+------------+------------------+
+| CUSTOMER_ID | CUSTOMER_NAME | CUSTOMER_EMAIL  | CUSTOMER_PHONE | LOAD_DATE  | CUSTOMER_ADDRESS |
+|-------------+---------------+-----------------+----------------+------------+------------------|
+|           1 | Arpit Rathi   | arpit@gmail.com | 1111111111     | 2022-04-14 | 125 New St       |
+|           2 | Pawan Singh   | pawan@gmail.com | 4444444444     | 2024-04-10 | 256 Highway St   |
+|           3 | Karan Agrawal | karan@gmail.com | 6666666666     | 2022-07-12 | 100 Sonaway Mn   |
+|           4 | Aarav Bishnoi | aarav@gmail.com | 8888888888     | 2024-08-24 | 140 Main Street  |
++-------------+---------------+-----------------+----------------+------------+------------------+
+4 Row(s) produced. Time Elapsed: 0.224s
+
+
+-- Applying Type2 SCD ---- using a flag
++-------------+---------------+-----------------+----------------+------------+------------------+----------+------------------+
+| CUSTOMER_ID | CUSTOMER_NAME | CUSTOMER_EMAIL  | CUSTOMER_PHONE | LOAD_DATE  | CUSTOMER_ADDRESS | ISACTIVE | CUSTOMER_SEGMENT |
+|-------------+---------------+-----------------+----------------+------------+------------------+----------+------------------|
+|           1 | Arpit Rathi   | arpit@gmail.com | 1111111111     | 2022-04-14 | 125 New St       | False    | gold             |
+|           2 | Pawan Singh   | pawan@gmail.com | 4444444444     | 2024-04-10 | 256 Highway St   | True     | NULL             |
+|           3 | Karan Agrawal | karan@gmail.com | 6666666666     | 2022-07-12 | 100 Sonaway Mn   | True     | NULL             |
+|           4 | Aarav Bishnoi | aarav@gmail.com | 8888888888     | 2024-08-24 | 140 Main Street  | True     | NULL             |
+|           1 | Arpit Rathi   | arpit@gmail.com | 1111111111     | 2022-04-14 | 125 New St       | True     | platinum         |
++-------------+---------------+-----------------+----------------+------------+------------------+----------+------------------+
+5 Row(s) produced. Time Elapsed: 0.284s
+
+Type2 SCD -- using load date and end date.
+Current employees tables:
++-------------+---------------+-----------------+----------------+------------+----------+------------------+------------------+
+| CUSTOMER_ID | CUSTOMER_NAME | CUSTOMER_EMAIL  | CUSTOMER_PHONE | LOAD_DATE  | END_DATE | CUSTOMER_ADDRESS | CUSTOMER_SEGMENT |
+|-------------+---------------+-----------------+----------------+------------+----------+------------------+------------------|
+|           1 | Arpit Rathi   | arpit@gmail.com | 2222222222     | 2022-04-14 | NULL     | 125 New St       | gold             |
+|           2 | Pawan Singh   | pawan@gmail.com | 4444444444     | 2024-04-10 | NULL     | 256 Highway St   | gold             |
+|           3 | Karan Agrawal | karan@gmail.com | 6666666666     | 2022-07-12 | NULL     | 100 Sonaway Mn   | gold             |
+|           4 | Aarav Bishnoi | aarav@gmail.com | 8888888888     | 2024-08-24 | NULL     | 140 Main Street  | gold             |
++-------------+---------------+-----------------+----------------+------------+----------+------------------+------------------+
+4 Row(s) produced. Time Elapsed: 0.285s
+
+
+
+After Applying Type2 SCD -- using load date and end date.
++---------+-------------+---------------+-----------------+----------------+------------+------------+------------------+------------------+
+| ROW_KEY | CUSTOMER_ID | CUSTOMER_NAME | CUSTOMER_EMAIL  | CUSTOMER_PHONE | LOAD_DATE  | END_DATE   | CUSTOMER_ADDRESS | CUSTOMER_SEGMENT |
+|---------+-------------+---------------+-----------------+----------------+------------+------------+------------------+------------------|
+|       1 |           1 | Arpit Rathi   | arpit@gmail.com | 2222222222     | 2022-04-14 | 2024-08-30 | 125 New St       | gold             |
+|       2 |           1 | Arpit Rathi   | arpit@gmail.com | 2222222222     | 2024-08-30 | NULL       | 125 New St       | platinum         |
+|       3 |           2 | Pawan Singh   | pawan@gmail.com | 4444444444     | 2024-04-10 | NULL       | 256 Highway St   | gold             |
+|       4 |           3 | Karan Agrawal | karan@gmail.com | 6666666666     | 2022-07-12 | NULL       | 100 Sonaway Mn   | gold             |
+|       5 |           4 | Aarav Bishnoi | aarav@gmail.com | 8888888888     | 2024-08-24 | NULL       | 140 Main Street  | gold             |
++---------+-------------+---------------+-----------------+----------------+------------+------------+------------------+------------------+
+5 Row(s) produced. Time Elapsed: 0.943s
+
+
+
+-- Now applying the SCD 3 on customers table
+--  we will only keep the previous value
++-------------+---------------+-----------------+----------------+------------+------------------+----------+------------------+------------------+
+| CUSTOMER_ID | CUSTOMER_NAME | CUSTOMER_EMAIL  | CUSTOMER_PHONE | LOAD_DATE  | CUSTOMER_ADDRESS | ISACTIVE | CUSTOMER_SEGMENT | PREVIOUS_SEGMENT |
+|-------------+---------------+-----------------+----------------+------------+------------------+----------+------------------+------------------|
+|           1 | Arpit Rathi   | arpit@gmail.com | 1111111111     | 2022-04-14 | 125 New St       | False    | gold             | NULL             |
+|           2 | Pawan Singh   | pawan@gmail.com | 4444444444     | 2024-04-10 | 256 Highway St   | True     | NULL             | NULL             |
+|           3 | Karan Agrawal | karan@gmail.com | 6666666666     | 2022-07-12 | 100 Sonaway Mn   | True     | NULL             | NULL             |
+|           4 | Aarav Bishnoi | aarav@gmail.com | 8888888888     | 2024-08-24 | 140 Main Street  | True     | NULL             | NULL             |
+|           1 | Arpit Rathi   | arpit@gmail.com | 1111111111     | 2022-04-14 | 125 New St       | True     | silver           | platinum         |
++-------------+---------------+-----------------+----------------+------------+------------------+----------+------------------+------------------+
+5 Row(s) produced. Time Elapsed: 1.173s
+
